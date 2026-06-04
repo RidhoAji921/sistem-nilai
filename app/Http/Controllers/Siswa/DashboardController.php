@@ -10,6 +10,11 @@ class DashboardController extends Controller
     public function index()
     {
         $siswa = Auth::user()->siswa;
-        return view('siswa.dashboard', compact('siswa'));
+        
+        // Hitung rata-rata menggunakan method OOP
+        $rataRata = $siswa->getRataRataNilai();
+        $status = $siswa->getStatusKelulusan();
+        
+        return view('siswa.dashboard', compact('siswa', 'rataRata', 'status'));
     }
 }

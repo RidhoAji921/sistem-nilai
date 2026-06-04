@@ -76,9 +76,12 @@ class SiswaController extends Controller
     public function destroy($id)
     {
         $siswa = Siswa::findOrFail($id);
+        
+        // Hapus user terkait terlebih dahulu
         if ($siswa->user) {
             $siswa->user->delete();
         }
+        
         $siswa->delete();
 
         return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil dihapus');

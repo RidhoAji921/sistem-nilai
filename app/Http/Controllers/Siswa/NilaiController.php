@@ -11,11 +11,13 @@ class NilaiController extends Controller
     public function index()
     {
         $siswa = Auth::user()->siswa;
+        
+        // Ambil semua nilai siswa
         $nilai = Nilai::with('mataPelajaran')
             ->where('siswa_id', $siswa->id)
             ->get();
         
-        // Hitung rata-rata menggunakan method OOP
+        // Hitung rata-rata dan status menggunakan method OOP
         $rataRata = $siswa->getRataRataNilai();
         $status = $siswa->getStatusKelulusan();
         

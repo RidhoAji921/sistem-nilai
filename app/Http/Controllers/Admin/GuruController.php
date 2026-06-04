@@ -76,9 +76,12 @@ class GuruController extends Controller
     public function destroy($id)
     {
         $guru = Guru::findOrFail($id);
+        
+        // Hapus user terkait terlebih dahulu
         if ($guru->user) {
             $guru->user->delete();
         }
+        
         $guru->delete();
 
         return redirect()->route('admin.guru.index')->with('success', 'Guru berhasil dihapus');

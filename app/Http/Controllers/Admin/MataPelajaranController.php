@@ -17,8 +17,8 @@ class MataPelajaranController extends Controller
 
     public function create()
     {
-        $guru = Guru::all();
-        return view('admin.mapel.create', compact('guru'));
+        $gurus = Guru::all(); // Ambil semua data guru
+        return view('admin.mapel.create', compact('gurus'));
     }
 
     public function store(Request $request)
@@ -26,6 +26,7 @@ class MataPelajaranController extends Controller
         $request->validate([
             'kode' => 'required|unique:mata_pelajaran',
             'nama_mapel' => 'required',
+            'guru_id' => 'nullable|exists:guru,id',
         ]);
 
         MataPelajaran::create($request->all());
@@ -36,8 +37,8 @@ class MataPelajaranController extends Controller
     public function edit($id)
     {
         $mapel = MataPelajaran::findOrFail($id);
-        $guru = Guru::all();
-        return view('admin.mapel.edit', compact('mapel', 'guru'));
+        $gurus = Guru::all(); // Ambil semua data guru
+        return view('admin.mapel.edit', compact('mapel', 'gurus'));
     }
 
     public function update(Request $request, $id)
@@ -47,6 +48,7 @@ class MataPelajaranController extends Controller
         $request->validate([
             'kode' => 'required|unique:mata_pelajaran,kode,'.$id,
             'nama_mapel' => 'required',
+            'guru_id' => 'nullable|exists:guru,id',
         ]);
 
         $mapel->update($request->all());
