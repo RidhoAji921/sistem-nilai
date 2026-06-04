@@ -24,11 +24,20 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nis' => 'required|unique:siswa',
-            'nama' => 'required',
-            'kelas' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            // NIS: hanya angka, panjang 8-12 karakter, unik
+            'nis' => 'required|string|regex:/^[0-9]+$/|min:8|max:12|unique:siswa,nis',
+            
+            // Nama: hanya huruf dan spasi, minimal 3 karakter, maksimal 100
+            'nama' => 'required|string|regex:/^[a-zA-Z\s]+$/|min:3|max:100',
+            
+            // Kelas: format kelas yang valid (contoh: VI-A, 6A, 6-A)
+            'kelas' => 'required|string|regex:/^[0-9IVX]+[-]?[A-Z]+$/|max:10',
+            
+            // Email: valid format, cek DNS (optional), unik
+            'email' => 'required|email:rfc,dns|unique:users,email',
+            
+            // Password: minimal 6 karakter, harus mengandung huruf dan angka
+            'password' => 'required|string|min:6',
         ]);
 
         $user = User::create([
@@ -57,11 +66,44 @@ class SiswaController extends Controller
     public function update(Request $request, $id)
     {
         $siswa = Siswa::findOrFail($id);
-        
         $request->validate([
-            'nis' => 'required|unique:siswa,nis,'.$id,
-            'nama' => 'required',
-            'kelas' => 'required',
+            // NIS: hanya angka, panjang 8-12 karakter, unik (kecuali dirinya sendiri)
+            'nis' => [
+                'required',
+                'string',
+                'regex:/^[0-9]+$/',
+                'min:8',
+                'max:12',
+                'unique:siswa,nis,' . $id
+            ],
+            
+            // Nama: hanya huruf dan spasi, minimal 3 karakter, maksimal 100
+            'nama' => [
+                'required',
+                'string',
+                'regex:/^[a-zA-Z\s]+$/',
+                'min:3',
+                'max:100'
+            ],
+            
+            // Kelas: format kelas yang valid
+            'kelas' => [
+                'required',
+                'string',
+                'regex:/^[0-9IVX]+[-]?[A-Z]+$/',
+                'max:10'
+            ],
+        ], [
+            // Pesan error kustom
+            'nis.regex' => 'NIS hanya boleh berisi angka',
+            'nis.min' => 'NIS minimal 8 digit',
+            'nis.max' => 'NIS maksimal 12 digit',
+            'nis.unique' => 'NIS sudah terdaftar',
+            'nama.regex' => 'Nama hanya boleh berisi huruf dan spasi',
+            'nama.min' => 'Nama minimal 3 karakter',
+            'nama.max' => 'Nama maksimal 100 karakter',
+            'kelas.regex' => 'Format kelas tidak valid (contoh: VI-A, 6A, 6-A)',
+            'kelas.max' => 'Kelas maksimal 10 karakter',
         ]);
 
         $siswa->update([
