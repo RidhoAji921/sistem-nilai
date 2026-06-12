@@ -1,58 +1,272 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### 1. LARAVEL COMMAND
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+#### Setup & Installation
 ```bash
-composer require laravel/boost --dev
+# Buat project baru
+composer create-project laravel/laravel nama-project
 
-php artisan boost:install
+# Buat project dengan versi tertentu
+composer create-project laravel/laravel:^10.0 nama-project
+
+# Install Breeze (auth)
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+npm install && npm run build
+
+# Install package umum
+composer require barryvdh/laravel-dompdf  # PDF
+composer require maatwebsite/excel        # Excel
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+#### Artisan Commands
+```bash
+# Make (Membuat file)
+php artisan make:model NamaModel -m      # Model + migration
+php artisan make:controller NamaController --resource  # Controller resource
+php artisan make:middleware NamaMiddleware
+php artisan make:seeder NamaSeeder
+php artisan make:factory NamaFactory
 
-## Contributing
+# Migration
+php artisan migrate                      # Jalankan migration
+php artisan migrate:fresh                # Hapus semua & migrate ulang
+php artisan migrate:fresh --seed         # + jalankan seeder
+php artisan migrate:rollback             # Rollback terakhir
+php artisan make:migration nama_migration
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Seeder
+php artisan db:seed                      # Jalankan semua seeder
+php artisan db:seed --class=NamaSeeder   # Jalankan specific seeder
 
-## Code of Conduct
+# Cache & Clear
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear               # Clear semua sekaligus
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Route
+php artisan route:list                   # Lihat semua route
+php artisan route:list | grep siswa      # Filter route
 
-## Security Vulnerabilities
+# Tinker (REPL)
+php artisan tinker                       # Masuk ke tinker
+# Di tinker: App\Models\User::all(); exit;
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Lainnya
+php artisan key:generate                 # Generate APP_KEY
+php artisan storage:link                 # Link storage
+php artisan down / up                    # Maintenance mode
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 2. STRUKTUR FOLDER
+
+```
+📁 sistem-nilai/
+│
+├── 📁 app/
+│   ├── 📁 Http/
+│   │   ├── 📁 Controllers/         # Controller (nama: PascalCase + Controller)
+│   │   │   ├── 📁 Admin/           # Controller untuk role admin
+│   │   │   ├── 📁 Guru/            # Controller untuk role guru
+│   │   │   ├── 📁 Siswa/           # Controller untuk role siswa
+│   │   │   └── 📁 Auth/            # Controller auth (bawaan Breeze)
+│   │   ├── 📁 Middleware/          # Middleware custom
+│   │   │   └── CheckRole.php       # Contoh: cek role user
+│   │   └── 📁 Kernel.php           # Daftar middleware (Laravel 10 ke bawah)
+│   │
+│   ├── 📁 Models/                   # Model (Eloquent)
+│   │   ├── User.php
+│   │   ├── Siswa.php
+│   │   ├── Guru.php
+│   │   ├── MataPelajaran.php
+│   │   └── Nilai.php
+│   │
+│   └── 📁 Helpers/                  # Folder custom untuk fungsi terstruktur
+│       └── NilaiHelper.php
+│
+├── 📁 database/
+│   ├── 📁 migrations/               # File migration (nama: create_nama_tabel_table)
+│   │   ├── create_users_table.php
+│   │   ├── create_siswa_table.php
+│   │   └── ...
+│   └── 📁 seeders/                  # File seeder (nama: NamaTableSeeder)
+│       ├── DatabaseSeeder.php
+│       ├── UserSeeder.php
+│       └── ...
+│
+├── 📁 resources/
+│   └── 📁 views/                    # Blade template
+│       ├── 📁 layouts/              # Layout template
+│       │   ├── admin.blade.php
+│       │   ├── guru.blade.php
+│       │   └── siswa.blade.php
+│       ├── 📁 admin/                # View untuk admin
+│       ├── 📁 guru/                 # View untuk guru
+│       ├── 📁 siswa/                # View untuk siswa
+│       ├── 📁 auth/                 # View login (bawaan Breeze)
+│       └── welcome.blade.php        # Landing page
+│
+├── 📁 routes/
+│   └── web.php                      # Semua route web
+│
+├── 📁 config/
+│   └── database.php                 # Konfigurasi database (bisa dari .env)
+│
+├── .env                             # Environment variable (DB, APP_KEY, dll)
+├── composer.json                    # Daftar package + autoload
+└── artisan                          # CLI tool
+```
+
+---
+
+### 3. POLA DASAR
+
+#### Route Dasar (web.php)
+```php
+// Route basic
+Route::get('/url', [Controller::class, 'method'])->name('route.name');
+
+// Route dengan middleware
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('siswa', SiswaController::class);
+});
+
+// Route dengan prefix
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+// Route resource (otomatis index, create, store, show, edit, update, destroy)
+Route::resource('siswa', SiswaController::class);
+```
+
+#### Controller Dasar (Resource)
+```php
+class SiswaController extends Controller
+{
+    public function index() { $data = Siswa::all(); return view('index', compact('data')); }
+    public function create() { return view('create'); }
+    public function store(Request $request) { Model::create($request->validated()); return redirect()->route('index'); }
+    public function edit($id) { $data = Model::findOrFail($id); return view('edit', compact('data')); }
+    public function update(Request $request, $id) { Model::findOrFail($id)->update($request->validated()); return redirect()->route('index'); }
+    public function destroy($id) { Model::findOrFail($id)->delete(); return redirect()->route('index'); }
+}
+```
+
+#### Model Dasar
+```php
+class Siswa extends Model
+{
+    protected $table = 'siswa';           // Nama tabel (jika beda konvensi)
+    protected $fillable = ['nis', 'nama', 'kelas'];  // Yang boleh diisi massal
+    protected $guarded = [];              // Kebalikan fillable
+    
+    // Relasi
+    public function user() { return $this->belongsTo(User::class); }
+    public function nilai() { return $this->hasMany(Nilai::class); }
+}
+```
+
+#### Migration Dasar
+```php
+public function up() {
+    Schema::create('nama_tabel', function (Blueprint $table) {
+        $table->id();
+        $table->string('field1')->unique();
+        $table->string('field2');
+        $table->foreignId('foreign_id')->constrained()->onDelete('cascade');
+        $table->timestamps();
+    });
+}
+```
+
+---
+
+### 4. COMMAND
+
+| Yang Ingin Dilakukan | Command / Code |
+|---------------------|----------------|
+| Lihat semua route | `php artisan route:list` |
+| Buat Model + Migration + Controller sekaligus | `php artisan make:model Nama -mcr` |
+| Cek koneksi database | `php artisan db:show` atau cek di `.env` |
+| Reset database + seeder | `php artisan migrate:fresh --seed` |
+| Debug query SQL | `DB::enableQueryLog(); Model::all(); dd(DB::getQueryLog());` |
+| Cek versi Laravel | `php artisan --version` |
+| Membuat helper custom | Buat folder `app/Helpers`, register di `composer.json` -> `"files": ["app/Helpers/NilaiHelper.php"]`, lalu `composer dump-autoload` |
+
+---
+
+### 5. COMMON ERROR
+
+| Error | Penyebab | Solusi |
+|-------|----------|--------|
+| `Class not found` | Lupa `use` namespace | `use App\Models\NamaModel;` |
+| `Table not found` | Migration belum dijalankan | `php artisan migrate` |
+| `Route not defined` | Nama route salah atau belum dibuat | `php artisan route:list` cek nama |
+| `MassAssignmentException` | Lupa `$fillable` di Model | Tambah `protected $fillable = [...]` |
+| `Foreign key constraint` | Urutan migration salah atau data tidak konsisten | Pastikan tabel induk dibuat lebih dulu |
+| `Middleware not found` | Lupa register di kernel | Laravel 10 ke bawah: `$routeMiddleware`; Laravel 11/12: `bootstrap/app.php` |
+
+---
+
+### 6. LARAVEL 11/12 DIFFERENCE
+
+| Aspek | Laravel 10 ke bawah | Laravel 11/12 |
+|-------|--------------------|----------------|
+| **Middleware** | Di `Kernel.php` | Di `bootstrap/app.php` |
+| **Console** | Di `Console/Kernel.php` | Di `bootstrap/app.php` |
+| **Exception** | Di `Exceptions/Handler.php` | Di `bootstrap/app.php` |
+| **Config** | Banyak file di `config/` | Masih sama |
+| **Routes** | `web.php`, `api.php`, dll | Sama |
+
+**Contoh register middleware di Laravel 11/12:**
+```php
+// bootstrap/app.php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'role' => CheckRole::class,
+    ]);
+})
+```
+
+---
+
+### 7. LARAVEL FLOW
+
+```bash
+# 1. Buat project
+composer create-project laravel/laravel .
+
+# 2. Setup .env (database)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=
+
+# 3. Buat migration
+php artisan make:model Siswa -m
+# isi migration, lalu:
+php artisan migrate
+
+# 4. Buat controller
+php artisan make:controller SiswaController --resource
+
+# 5. Buat helper (fungsi terstruktur)
+mkdir app/Helpers
+# buat file NilaiHelper.php, lalu:
+composer dump-autoload
+
+# 6. Buat route di web.php
+
+# 7. Buat view
+mkdir resources/views/admin
+# buat file index.blade.php, create.blade.php, edit.blade.php
+
+# 8. Jalankan
+php artisan serve
+```
